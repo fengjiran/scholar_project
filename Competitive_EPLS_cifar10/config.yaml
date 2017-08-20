@@ -1,0 +1,53 @@
+# If want to input None, use !!null
+n_slice: 4  # split the dataset to n_slice parts
+
+polarity_split: True
+
+# Network structure
+n_in: 108
+n_out: 10
+hidden_layer_size: 100 #6000
+
+# Pretrain samples number
+NSPL: 400000
+patch_width: 6
+
+# Epoch
+pretraining_epochs: 90
+finetuning_epochs: 60
+
+# The learning rate of pretrain and finetune
+pretrain_lr: 0.0002
+finetune_lr: [0.005, 0.001, 0.0005] #[0.005, 0.0001, 8.0e-5, 1.6e-6]
+
+# Batch size 
+pretrain_batch_size: 1000
+finetune_batch_size: 50
+
+# Weight decay
+l2_reg: 0 #0.001 #0
+
+# losso regular
+l1_reg: 0 #0.004
+
+sparsity_rate: 0.95 #0.8
+
+# Classifier
+classifier: LR
+
+# activation
+activation: Relu # T.nnet.sigmoid
+
+eps: 1.0e-6
+
+use_dropout: True
+dropout_rate: 0.5
+max_col_norm: 15
+
+doPretrain: 1
+isFirstTimePretrain: 1
+
+doFinetune: 1
+isFirstTimeFinetune: 1
+
+parameters_dir: /mnt/UAV_Storage/richard/epls_parameters/
