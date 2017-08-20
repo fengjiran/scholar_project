@@ -1,0 +1,24 @@
+# If want to input None, use !!null
+activation: 'relu'
+weight_decay: 0.001
+
+initial_lr: 0.01
+momentum: 0.9
+lr_decay: 0.0
+batch_size: 250
+train_epochs: 350
+
+# The parameters of learning rate schedular
+# The learning rate lr was adapted using a 
+# schedular in which lr is multiplied by a 
+# fixed multiplier of drop_rate after e1, e2, e3
+# epochs respectively.
+lr_scheduler: True
+e1: 100 # epoch 1 to decay lr
+e2: 200 # epoch 2 to decay lr
+e3: 300 # epoch 3 to decay lr
+
+drop_rate: 0.1    # not for dropout
+
+train_history_filepath: 'train_history_convpool_c.csv'
+test_history_filepath: 'test_history_convpool_c.csv'

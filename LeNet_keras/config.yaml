@@ -1,0 +1,9 @@
+# If want to input None, use !!null
+
+batch_size: 128
+nb_classes: 10
+nb_epoch: 20
+
+# input image dimensions
+img_rows: 28
+img_cols: 28

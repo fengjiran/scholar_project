@@ -1,0 +1,15 @@
+# Ignore all the .h5 files since they are model files produced by keras
+*.h5
+
+# Python
+*.pyc
+*.py~
+*.save
+
+# VSCODE settings
+.sync/
+.vscode/
+
+*.pickle
+
+vue/test/node_modules

@@ -1,0 +1,12 @@
+# If want to input None, use !!null
+
+# Network structure
+n_in: 784
+n_out: 10
+activation: softmax
+weights_init: zero
+learning_rate: 0.13
+
+n_epochs: 20 # default 1000
+batch_size: 600
+loss: categorical_crossentropy
