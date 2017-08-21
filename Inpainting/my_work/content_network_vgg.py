@@ -233,6 +233,7 @@ def content_network():
                                 data_format=K.image_data_format(),
                                 kernel_regularizer=l2(5e-4)))
 
+    content.add(Activation('tanh'))
     return content
 
 
