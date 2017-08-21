@@ -3,9 +3,9 @@ import json
 import random
 import platform
 from xml.etree import ElementTree
+import warnings
 import skimage.io
 import skimage.transform
-import warnings
 
 # from keras.utils.data_utils import get_file
 from keras import backend as K
