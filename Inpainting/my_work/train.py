@@ -49,7 +49,7 @@ lambda_adv = 1 - lambda_recon
 overlap_size = 7
 hiding_size = 64
 
-result_path = '/home/richard/Deep_Learning_Projects/Inpainting/my_work/imagenet'
+result_path = './imagenet'
 
 # region mask
 mask_recon = np.ones((hiding_size - 2 * overlap_size, hiding_size - 2 * overlap_size))
@@ -74,9 +74,10 @@ def recon_loss(y_true, y_pred):
 
 
 model = content_network()
-opt = SGD(lr=init_lr, momentum=0.9, decay=1e-5)
+opt = SGD(lr=init_lr, momentum=0.9)
 model.compile(loss=recon_loss,
               optimizer=opt)
+
 
 for epoch in range(n_epochs):
     print('Epoch: {0}/{1}'.format(epoch + 1, n_epochs))
@@ -102,8 +103,7 @@ for epoch in range(n_epochs):
                   batch_size=train_batch_size,
                   epochs=1)
 
-        if (iters != 0)and(iters % 500 == 0):
-            print('save the images.')
+        if (iters != 0)and(iters % 200 == 0):
             ii = 0
             train_recon_images = model.predict(images)
             train_recon_images = [train_recon_images[i] for i in range(train_recon_images.shape[0])]
@@ -114,8 +114,8 @@ for epoch in range(n_epochs):
                 train_with_crop[:, y:y + 64, x:x + 64] = recon_hid
                 train_with_crop = np.transpose(train_with_crop, [1, 2, 0])
 
-                cv2.imwrite(os.path.join(result_path, 'img_' + str(ii) + '.jpg'), train_with_crop)
-                # http://blog.csdn.net/code_better/article/details/53242943
+                cv2.imwrite(os.path.join(result_path, 'img_' + str(ii) + '_' +
+                                         str(int(iters / 100)) + '.jpg'), train_with_crop)
 
                 ii += 1
                 if ii > 50:
