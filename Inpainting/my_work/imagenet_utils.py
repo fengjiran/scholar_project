@@ -77,6 +77,33 @@ def load_single_image(path, pre_height=256, pre_width=256, height=224, width=224
     return resized_img  # [3, 224, 224]
 
 
+def crop_random(image_ori, width=64, height=64, x=None, y=None, overlap=7):
+
+    if image_ori is None:
+        return None
+
+    random_y = np.random.randint(overlap, height - overlap) if x is None else x
+    random_x = np.random.randint(overlap, width - overlap) if y is None else y
+
+    image = image_ori.copy()
+    crop = image_ori.copy()
+
+    crop = crop[:, random_y:random_y + height, random_x:random_x + width]
+    image[0,
+          random_y + overlap:random_y + height - overlap,
+          random_x + overlap:random_x + width - overlap] = 2 * 117. / 255. - 1.
+
+    image[1,
+          random_y + overlap:random_y + height - overlap,
+          random_x + overlap:random_x + width - overlap] = 2 * 104. / 255. - 1.
+
+    image[2,
+          random_y + overlap:random_y + height - overlap,
+          random_x + overlap:random_x + width - overlap] = 2 * 123. / 255. - 1.
+
+    return image, crop, random_x, random_y
+
+
 def read_batch(batch_size, images_source):
     """It returns a batch of single images (no data-augmentation).
 
