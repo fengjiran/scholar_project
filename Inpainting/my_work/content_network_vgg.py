@@ -2,14 +2,24 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import numpy as np
+
 from keras.models import Model
+from keras.models import Sequential
 from keras.layers import Input
 from keras.layers import Dense
 from keras.layers import Flatten
 from keras.layers import Conv2D
+from keras.layers import Reshape
 from keras.layers import MaxPooling2D
 from keras.layers import GlobalAveragePooling2D
 from keras.layers import GlobalMaxPooling2D
+from keras.layers import UpSampling2D
+from keras.layers import Conv2DTranspose
+from keras.layers import BatchNormalization
+from keras.layers import Activation
+
+from keras.regularizers import l2
 
 from keras import backend as K
 
@@ -19,11 +29,11 @@ WEIGHTS_PATH = './model/vgg19_weights_th_dim_ordering_th_kernels.h5'
 WEIGHTS_PATH_NO_TOP = './model/vgg19_weights_th_dim_ordering_th_kernels_notop.h5'
 
 
-def VGG19(include_top=True,
+def VGG19(include_top=False,
           weights='imagenet',
           input_tensor=None,
           input_shape=None,
-          pooling=None,
+          pooling='max',
           classes=1000):
     """Instantiate the VGG19 architecture.
 
@@ -150,9 +160,93 @@ def VGG19(include_top=True,
     # Create model.
     model = Model(img_input, x, name='vgg19')
 
+    # load weights
+    if weights == 'imagenet':
+        if include_top:
+            weights_path = WEIGHTS_PATH
+        else:
+            weights_path = WEIGHTS_PATH_NO_TOP
+
+    model.load_weights(weights_path)
+
+    model.trainable = False
+
+    # for layer in model.layers:
+    #     layer.trainable = False
+
     return model
 
 
+def content_network():
+    """Set up the content network."""
+    if K.image_data_format() == 'channels_first':
+        bn_axis = 1
+    else:
+        bn_axis = -1
+
+    encoder = VGG19(include_top=False, pooling='max')
+    print('VGG 19 loaded!')
+
+    content = Sequential()
+    content.add(encoder)
+    content.add(Dense(4000, activation='relu', kernel_regularizer=l2(5e-4)))
+    content.add(Reshape((4000, 1, 1)))
+    content.add(UpSampling2D(size=(2, 2)))
+    content.add(Conv2DTranspose(filters=512,
+                                kernel_size=(3, 3),
+                                data_format=K.image_data_format(),
+                                kernel_regularizer=l2(5e-4)))
+    content.add(BatchNormalization(axis=bn_axis))
+    content.add(Activation('relu'))
+
+    content.add(UpSampling2D(size=(2, 2)))
+    content.add(Conv2DTranspose(filters=256,
+                                kernel_size=(3, 3),
+                                padding='same',
+                                data_format=K.image_data_format(),
+                                kernel_regularizer=l2(5e-4)))
+    content.add(BatchNormalization(axis=bn_axis))
+    content.add(Activation('relu'))
+
+    content.add(UpSampling2D(size=(2, 2)))
+    content.add(Conv2DTranspose(filters=128,
+                                kernel_size=(3, 3),
+                                padding='same',
+                                data_format=K.image_data_format(),
+                                kernel_regularizer=l2(5e-4)))
+    content.add(BatchNormalization(axis=bn_axis))
+    content.add(Activation('relu'))
+
+    content.add(UpSampling2D(size=(2, 2)))
+    content.add(Conv2DTranspose(filters=64,
+                                kernel_size=(3, 3),
+                                padding='same',
+                                data_format=K.image_data_format(),
+                                kernel_regularizer=l2(5e-4)))
+    content.add(BatchNormalization(axis=bn_axis))
+    content.add(Activation('relu'))
+
+    content.add(UpSampling2D(size=(2, 2)))
+    content.add(Conv2DTranspose(filters=3,
+                                kernel_size=(3, 3),
+                                padding='same',
+                                data_format=K.image_data_format(),
+                                kernel_regularizer=l2(5e-4)))
+
+    return content
+
+
 if __name__ == '__main__':
-    model = VGG19()
+    # model = VGG19(include_top=False, pooling='max')
+    # print(model.trainable)
+    # print(model.summary())
+    # print(model.layers[0].get_config())
+    # print(model.layers[1].get_config())
+    # print(model.layers[1].trainable)
+
+    model = content_network()
     print(model.summary())
+
+    a = np.random.rand(1, 3, 224, 224)
+    b = model.predict(a)
+    print(b.shape)
