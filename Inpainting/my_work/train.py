@@ -63,7 +63,7 @@ mask_overlap = 1 - mask_recon
 
 
 def recon_loss(y_true, y_pred):
-    """The reconstuction loss."""
+    """Compute the reconstuction loss."""
     loss_recon_ori = K.square(y_true - y_pred)
     loss_recon_center = K.mean(K.sqrt(1e-5 + K.sum(loss_recon_ori * mask_recon, axis=[1, 2, 3]))) / 10.
     loss_recon_overlap = K.mean(K.sqrt(1e-5 + K.sum(loss_recon_ori * mask_overlap, axis=[1, 2, 3])))
