@@ -3,7 +3,6 @@ from __future__ import print_function
 
 import os
 import numpy as np
-import cv2
 from PIL import Image
 
 from keras.optimizers import SGD
@@ -120,14 +119,13 @@ for epoch in range(n_epochs):
             train_recon_images = [train_recon_images[i] for i in range(train_recon_images.shape[0])]
 
             for recon, img, x, y in zip(train_recon_images, images, xs, ys):
-                recon_hid = (255. * (recon + 1) / 2.).astype(int)
-                train_with_crop = (255. * (img + 1) / 2.).astype(int)
+                recon_hid = (255. * (recon + 1) / 2.).astype('uint8')
+                train_with_crop = (255. * (img + 1) / 2.).astype('uint8')
                 train_with_crop[:, y:y + 64, x:x + 64] = recon_hid
                 # train_with_crop = np.transpose(train_with_crop, [1, 2, 0])
-                image = array_to_image(train_with_crop)
-                image.save(os.path.join(result_path, 'img_' + str(ii) + '.jpg'), 'jpg')
 
-                # cv2.imwrite(os.path.join(result_path, 'img_' + str(ii) + '.jpg'), train_with_crop)
+                image = array_to_image(train_with_crop)
+                image.save(os.path.join(result_path, 'img_' + str(ii) + '.jpg'))
                 # http://blog.csdn.net/code_better/article/details/53242943
 
                 ii += 1
