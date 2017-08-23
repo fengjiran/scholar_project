@@ -4,6 +4,7 @@ from __future__ import print_function
 import os
 import numpy as np
 import cv2
+from PIL import Image
 
 from keras.optimizers import SGD
 from keras.callbacks import Callback
@@ -73,6 +74,16 @@ def recon_loss(y_true, y_pred):
     return loss_recon_center + loss_recon_overlap
 
 
+def array_to_image(array):
+    r = Image.fromarray(array[0]).convert('L')
+    g = Image.fromarray(array[1]).convert('L')
+    b = Image.fromarray(array[2]).convert('L')
+
+    image = Image.merge('RGB', (r, g, b))
+
+    return image
+
+
 model = content_network()
 opt = SGD(lr=init_lr, momentum=0.9, decay=1e-5)
 model.compile(loss=recon_loss,
@@ -92,13 +103,13 @@ for epoch in range(n_epochs):
 
         images_crops = map(crop_random, images)
 
-        images, crops, xs, ys = zip(*images_crops)
+        images, ground_truth, xs, ys = zip(*images_crops)
 
         images = np.array(images)  # images with holes
-        crops = np.array(crops)  # the holes cropped from orignal images
+        ground_truth = np.array(ground_truth)  # the holes cropped from orignal images
 
         model.fit(x=images,
-                  y=crops,
+                  y=ground_truth,
                   batch_size=train_batch_size,
                   epochs=1)
 
@@ -112,9 +123,11 @@ for epoch in range(n_epochs):
                 recon_hid = (255. * (recon + 1) / 2.).astype(int)
                 train_with_crop = (255. * (img + 1) / 2.).astype(int)
                 train_with_crop[:, y:y + 64, x:x + 64] = recon_hid
-                train_with_crop = np.transpose(train_with_crop, [1, 2, 0])
+                # train_with_crop = np.transpose(train_with_crop, [1, 2, 0])
+                image = array_to_image(train_with_crop)
+                image.save(os.path.join(result_path, 'img_' + str(ii) + '.jpg'), 'jpg')
 
-                cv2.imwrite(os.path.join(result_path, 'img_' + str(ii) + '.jpg'), train_with_crop)
+                # cv2.imwrite(os.path.join(result_path, 'img_' + str(ii) + '.jpg'), train_with_crop)
                 # http://blog.csdn.net/code_better/article/details/53242943
 
                 ii += 1
