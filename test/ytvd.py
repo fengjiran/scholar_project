@@ -12,7 +12,7 @@ def download_main(link):
 
 
 if __name__ == '__main__':
-    download_main(sys.argv[1])
+    # download_main(sys.argv[1])
     links = ['https://www.youtube.com/watch?v=GfyyoKPhl_U&list=PL3rfV4zNE8CBc5xMh6gf333obV5-6n_Jl&index=1',
              'https://www.youtube.com/watch?v=lHegI9beSwA&list=PL3rfV4zNE8CBc5xMh6gf333obV5-6n_Jl&index=2',
              'https://www.youtube.com/watch?v=vBh4uaPnbqk&list=PL3rfV4zNE8CBc5xMh6gf333obV5-6n_Jl&index=3',
@@ -302,7 +302,19 @@ if __name__ == '__main__':
                    'https://www.youtube.com/watch?v=tTw7w0S8ky0&list=PLnpXp9wjhP4Fgxwv4wMdYdlZJacBBAXyB&index=62',
                    'https://www.youtube.com/watch?v=4VXmjxG3hCU&list=PLnpXp9wjhP4Fgxwv4wMdYdlZJacBBAXyB&index=63']
 
-    # for link in links_html5[61:]:
-    #     download_main(link)
+    links_lizhi = ['https://www.youtube.com/watch?v=MKkTxsaAKQQ',
+                   'https://www.youtube.com/watch?v=iYxe4HOgoC8',
+                   'https://www.youtube.com/watch?v=yGpM-oE62Ww',
+                   'https://www.youtube.com/watch?v=iP-Z1vRFIdU',
+                   'https://www.youtube.com/watch?v=ZKOGr2SVQfA',
+                   'https://www.youtube.com/watch?v=LlfE-1NNLws',
+                   'https://www.youtube.com/watch?v=jGpY7vbc49s',
+                   'https://www.youtube.com/watch?v=EkJxJUKKMvc&list=PLrUj8g5Ut8FgdM25ykyhg3i9OXqtx33JG&index=20',
+                   'https://www.youtube.com/watch?v=iEasfCQVjVE&list=PLrUj8g5Ut8FgdM25ykyhg3i9OXqtx33JG&index=21',
+                   'https://www.youtube.com/watch?v=N8i-F68Tsto&list=PLrUj8g5Ut8FgdM25ykyhg3i9OXqtx33JG&index=22',
+                   'https://www.youtube.com/watch?v=FwV9zwHTIfg&list=PLrUj8g5Ut8FgdM25ykyhg3i9OXqtx33JG&index=23',
+                   'https://www.youtube.com/watch?v=afXHGna5xzk']
+    for link in links_lizhi[11:]:
+        download_main(link)
 
     # download_main(links[19])
