@@ -142,9 +142,29 @@ def content_network():
     x = ZeroPadding2D(padding=(1, 1))(x)
     x = MaxPooling2D((3, 3), strides=(2, 2))(x)  # (N, 64, 56, 56)
 
+    # stage 2
     x = conv_block(x, 3, [64, 64, 256], strides=(1, 1))
     x = identity_block(x, 3, [64, 64, 256])
     x = identity_block(x, 3, [64, 64, 256])    # (N, 256, 56, 56)
+
+    # stage 3
+    x = conv_block(x, 3, [128, 128, 512])
+    x = identity_block(x, 3, [128, 128, 512])
+    x = identity_block(x, 3, [128, 128, 512])
+    x = identity_block(x, 3, [128, 128, 512])
+
+    # stage 4
+    x = conv_block(x, 3, [256, 256, 1024])
+    x = identity_block(x, 3, [256, 256, 1024])
+    x = identity_block(x, 3, [256, 256, 1024])
+    x = identity_block(x, 3, [256, 256, 1024])
+    x = identity_block(x, 3, [256, 256, 1024])
+    x = identity_block(x, 3, [256, 256, 1024])
+
+    # stage 5
+    x = conv_block(x, 3, [512, 512, 2048])
+    x = identity_block(x, 3, [512, 512, 2048])
+    x = identity_block(x, 3, [512, 512, 2048])
 
     model = Model(img_input, x)
 
