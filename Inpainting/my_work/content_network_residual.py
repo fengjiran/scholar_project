@@ -19,6 +19,7 @@ from keras.layers import UpSampling2D
 from keras.layers import Conv2DTranspose
 from keras.layers import BatchNormalization
 from keras.layers import Activation
+from keras.layers import ZeroPadding2D
 
 from keras.regularizers import l2
 
@@ -69,7 +70,7 @@ def identity_block(input_tensor, kernel_size, filters):
     return x
 
 
-def conv_block(input_tensor, kernel_size, filters):
+def conv_block(input_tensor, kernel_size, filters, strides=(2, 2)):
     """Construct a block that has a conv layer at shortcut(pre-activation).
 
     # Arguments
@@ -91,7 +92,7 @@ def conv_block(input_tensor, kernel_size, filters):
     x = BatchNormalization(axis=bn_axis)(input_tensor)
     x = Activation('relu')(x)
     x = Conv2D(filters=filters1,
-               strides=(2, 2),
+               strides=strides,
                kernel_size=(1, 1),
                kernel_regularizer=l2(1e-4))(x)
 
@@ -111,7 +112,7 @@ def conv_block(input_tensor, kernel_size, filters):
     shortcut = BatchNormalization(axis=bn_axis)(input_tensor)
     shortcut = Activation('relu')(shortcut)
     shortcut = Conv2D(filters=filters3,
-                      strides=(2, 2),
+                      strides=strides,
                       kernel_size=(1, 1),
                       kernel_regularizer=l2(1e-4))(shortcut)
 
@@ -133,5 +134,23 @@ def content_network():
     img_input = Input(shape=(3, 224, 224))
 
     x = Conv2D(filters=64,
-               kernel_size=(3, 3),
+               kernel_size=(7, 7),
+               strides=(2, 2),
+               padding='same',
                activation='relu')(img_input)
+
+    x = ZeroPadding2D(padding=(1, 1))(x)
+    x = MaxPooling2D((3, 3), strides=(2, 2))(x)  # (N, 64, 56, 56)
+
+    x = conv_block(x, 3, [64, 64, 256], strides=(1, 1))
+    x = identity_block(x, 3, [64, 64, 256])
+    x = identity_block(x, 3, [64, 64, 256])    # (N, 256, 56, 56)
+
+    model = Model(img_input, x)
+
+    return model
+
+
+if __name__ == '__main__':
+    model = content_network()
+    print(model.summary())
