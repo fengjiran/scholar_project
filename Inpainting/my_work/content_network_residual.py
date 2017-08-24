@@ -4,6 +4,7 @@ from __future__ import absolute_import
 
 import numpy as np
 
+from keras import layers
 from keras.models import Model
 from keras.models import Sequential
 from keras.layers import Input
@@ -24,6 +25,101 @@ from keras.regularizers import l2
 from keras import backend as K
 
 
+def identity_block(input_tensor, kernel_size, filters):
+    """Constuct the identity block(pre-activation).
+
+    The identity block is the block that has no conv layer at shortcut.
+
+    # Arguments
+        input_tensor: input tensor
+        kernel_size: default 3, the kernel size of middle conv layer at main path
+        filters: list of integers, the filters of 3 conv layer at main path
+
+    # Returns
+        Output tensor for the block.
+    """
+    filters1, filters2, filters3 = filters
+    if K.image_data_format() == 'channels_last':
+        bn_axis = 3
+    else:
+        bn_axis = 1
+
+    x = BatchNormalization(axis=bn_axis)(input_tensor)
+    x = Activation('relu')(x)
+    x = Conv2D(filters=filters1,
+               kernel_size=(1, 1),
+               kernel_regularizer=l2(1e-4))(x)
+
+    x = BatchNormalization(axis=bn_axis)(x)
+    x = Activation('relu')(x)
+    x = Conv2D(filters=filters2,
+               kernel_size=kernel_size,
+               kernel_regularizer=l2(1e-4),
+               padding='same')(x)
+
+    x = BatchNormalization(axis=bn_axis)(x)
+    x = Activation('relu')(x)
+    x = Conv2D(filters=filters3,
+               kernel_size=(1, 1),
+               kernel_regularizer=l2(1e-4))(x)
+
+    x = layers.add([x, input_tensor])
+    # x = Activation('relu')(x)
+
+    return x
+
+
+def conv_block(input_tensor, kernel_size, filters):
+    """Construct a block that has a conv layer at shortcut(pre-activation).
+
+    # Arguments
+        input_tensor: input tensor
+        kernel_size: default 3, the kernel size of middle conv layer at main path
+        filters: list of integers, the filterss of 3 conv layer at main path
+
+    # Returns
+        Output tensor for the block.
+    Note that from stage 3, the first conv layer at main path is with strides=(2,2)
+    And the shortcut should have strides=(2,2) as well
+    """
+    filters1, filters2, filters3 = filters
+    if K.image_data_format() == 'channels_last':
+        bn_axis = 3
+    else:
+        bn_axis = 1
+
+    x = BatchNormalization(axis=bn_axis)(input_tensor)
+    x = Activation('relu')(x)
+    x = Conv2D(filters=filters1,
+               strides=(2, 2),
+               kernel_size=(1, 1),
+               kernel_regularizer=l2(1e-4))(x)
+
+    x = BatchNormalization(axis=bn_axis)(x)
+    x = Activation('relu')(x)
+    x = Conv2D(filters=filters2,
+               kernel_size=kernel_size,
+               kernel_regularizer=l2(1e-4),
+               padding='same')(x)
+
+    x = BatchNormalization(axis=bn_axis)(x)
+    x = Activation('relu')(x)
+    x = Conv2D(filters=filters3,
+               kernel_size=(1, 1),
+               kernel_regularizer=l2(1e-4))(x)
+
+    shortcut = BatchNormalization(axis=bn_axis)(input_tensor)
+    shortcut = Activation('relu')(shortcut)
+    shortcut = Conv2D(filters=filters3,
+                      strides=(2, 2),
+                      kernel_size=(1, 1),
+                      kernel_regularizer=l2(1e-4))(shortcut)
+
+    x = layers.add([x, shortcut])
+
+    return x
+
+
 def content_network():
     """Set up the content network.
 
@@ -33,3 +129,9 @@ def content_network():
         bn_axis = 1
     else:
         bn_axis = -1
+
+    img_input = Input(shape=(3, 224, 224))
+
+    x = Conv2D(filters=64,
+               kernel_size=(3, 3),
+               activation='relu')(img_input)
