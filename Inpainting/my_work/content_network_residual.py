@@ -124,6 +124,7 @@ def conv_block(input_tensor, kernel_size, filters, strides=(2, 2)):
 def content_network():
     """Set up the content network.
 
+    https://zhuanlan.zhihu.com/p/28749411?from=singlemessage
     Ref: Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network
     """
     if K.image_data_format() == 'channels_first':
