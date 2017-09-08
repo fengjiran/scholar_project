@@ -314,7 +314,7 @@ if __name__ == '__main__':
                    'https://www.youtube.com/watch?v=N8i-F68Tsto&list=PLrUj8g5Ut8FgdM25ykyhg3i9OXqtx33JG&index=22',
                    'https://www.youtube.com/watch?v=FwV9zwHTIfg&list=PLrUj8g5Ut8FgdM25ykyhg3i9OXqtx33JG&index=23',
                    'https://www.youtube.com/watch?v=afXHGna5xzk']
-    for link in links_lizhi[11:]:
-        download_main(link)
+    # for link in links_lizhi[11:]:
+    #     download_main(link)
 
-    # download_main(links[19])
+    download_main('https://www.youtube.com/watch?v=s6_sMaCq7Mo')
