@@ -78,7 +78,7 @@ def load_single_image(path, pre_height=256, pre_width=256, height=224, width=224
 
 
 def read_batch(batch_size, images_source):
-    """It returns a batch of single images (no data-augmentation).
+    """Return a batch of single images (no data-augmentation).
 
     ILSVRC 2012 training set folder should be srtuctured like this:
     ILSVRC2012_img_train
