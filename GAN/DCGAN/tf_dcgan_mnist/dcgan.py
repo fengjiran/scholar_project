@@ -54,12 +54,41 @@ def generator(z, is_training):
 
 def discriminator(inputs, is_training, reuse=None):
     with tf.variable_scope('discriminator', reuse=reuse):
-        pass
+        conv1 = Conv2dLayer(inputs=inputs,
+                            filter_shape=[5, 5, 1, 64],
+                            stride=2,
+                            name='conv1')
+        conv1 = tf.nn.leaky_relu(conv1.output)
+
+        conv2 = Conv2dLayer(inputs=conv1,
+                            filter_shape=[5, 5, 64, 128],
+                            stride=2,
+                            name='conv2')
+        bn2 = BatchNormLayer(conv2.output, is_training, name='bn2')
+        bn2 = tf.nn.leaky_relu(bn2.output)
+
+        conv3 = Conv2dLayer(inputs=bn2,
+                            filter_shape=[5, 5, 128, 256],
+                            stride=2,
+                            name='conv3')
+        bn3 = BatchNormLayer(conv3.output, is_training, name='bn3')
+        bn3 = tf.nn.leaky_relu(bn3.output)
+
+        conv4 = Conv2dLayer(inputs=bn3,
+                            filter_shape=[5, 5, 256, 512],
+                            name='conv4')
+        bn4 = BatchNormLayer(conv4.output, is_training, name='bn4')
+        bn4 = tf.nn.leaky_relu(bn4.output)
+
+        return bn4
 
 
 if __name__ == '__main__':
     train_flag = tf.placeholder(tf.bool)
     z = tf.random_uniform([100, 100], minval=-1, maxval=1, dtype=tf.float32)
+    z1 = tf.random_uniform([100, 28, 28, 1], minval=-1, maxval=1)
+    d = discriminator(z1, train_flag)
+    print(d.get_shape())
     # with tf.Session() as sess:
     #     sess.run(generator(z))
-    generator(z, train_flag)
+    # generator(z, train_flag)
