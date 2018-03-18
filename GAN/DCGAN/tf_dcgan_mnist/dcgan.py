@@ -44,7 +44,7 @@ def generator(z, is_training):
                               output_shape=[batch_size, 28, 28, 1],
                               name='deconv5')
         output = tf.nn.tanh(deconv5.output)
-        print(output.get_shape())
+        # print(output.get_shape())
         return output
 
         # print(deconv2.output_shape)
