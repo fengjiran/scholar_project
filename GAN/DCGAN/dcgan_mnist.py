@@ -98,7 +98,7 @@ def discriminator_model():
     model.add(Flatten())
     model.add(Dense(1, activation='sigmoid'))
 
-    print model.summary()
+    print(model.summary())
     return model
 
 # def discriminator_model():
