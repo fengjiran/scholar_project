@@ -50,7 +50,7 @@ class DeconvLayer(object):
                                      initializer=tf.glorot_normal_initializer())
 
             self.b = tf.get_variable(name='b',
-                                     shape=filter_shape[-1],
+                                     shape=filter_shape[-2],
                                      initializer=tf.constant_initializer(0.))
 
             deconv = tf.nn.conv2d_transpose(value=self.inputs,
