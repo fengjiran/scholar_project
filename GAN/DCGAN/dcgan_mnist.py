@@ -43,7 +43,8 @@ def generator_model():
 
     model.add(Conv2DTranspose(1, (5, 5), padding='same', data_format=K.image_data_format()))
     model.add(Activation('tanh'))
-    print model.summary()
+    print(model.summary())
+    # print model.summary()
 
     return model
 
