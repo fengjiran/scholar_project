@@ -53,6 +53,7 @@ def generator(z, is_training):
 
 
 def discriminator(inputs, is_training, reuse=None):
+    batch_size = inputs.get_shape().as_list()[0]
     with tf.variable_scope('discriminator', reuse=reuse):
         conv1 = Conv2dLayer(inputs=inputs,
                             filter_shape=[5, 5, 1, 64],
@@ -79,8 +80,12 @@ def discriminator(inputs, is_training, reuse=None):
                             name='conv4')
         bn4 = BatchNormLayer(conv4.output, is_training, name='bn4')
         bn4 = tf.nn.leaky_relu(bn4.output)
+        bn4 = tf.reshape(bn4, [batch_size, -1])
 
-        return bn4
+        fc5 = FCLayer(bn4, 1, name='fc5')
+        # fc5 = tf.nn.sigmoid(fc5)
+
+        return fc5.output
 
 
 if __name__ == '__main__':
