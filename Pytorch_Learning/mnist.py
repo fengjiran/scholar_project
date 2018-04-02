@@ -20,12 +20,12 @@ tsf = transforms.Compose([transforms.ToTensor(),
                           transforms.Normalize((0.1307,), (0.3081,))])
 
 
-train_dataset = datasets.MNIST('/home/richard/datasets/',
+train_dataset = datasets.MNIST('/home/richard/datasets/mnist/',
                                train=True,
                                download=False,
                                transform=tsf)
 
-test_dataset = datasets.MNIST('/home/richard/datasets/',
+test_dataset = datasets.MNIST('/home/richard/datasets/mnist/',
                               train=False,
                               transform=tsf)
 
