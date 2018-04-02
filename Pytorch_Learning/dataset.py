@@ -84,25 +84,35 @@ class CelebaDataset(Dataset):
 
 
 if __name__ == '__main__':
-    img_path = '/Users/apple/Desktop/richard/Tensorflow_Learning/Inpainting/GlobalLocalImageCompletion_TF/CelebA/000013.png'
-    ori_image, image_with_hole, mask, x_loc, y_loc = input_transfrom(img_path)
+    # img_path = '/Users/apple/Desktop/richard/Tensorflow_Learning/Inpainting/GlobalLocalImageCompletion_TF/CelebA/000013.png'
+    # ori_image, image_with_hole, mask, x_loc, y_loc = input_transfrom(img_path)
 
-    tsf1 = transforms.Compose([transforms.Normalize((-1, -1, -1), (2, 2, 2)),
-                               transforms.ToPILImage()])
+    # tsf1 = transforms.Compose([transforms.Normalize((-1, -1, -1), (2, 2, 2)),
+    #                            transforms.ToPILImage()])
 
-    print(ori_image.size())
-    print(image_with_hole.size())
-    print(mask.size())
-    print(x_loc, y_loc)
+    # print(ori_image.size())
+    # print(image_with_hole.size())
+    # print(mask.size())
+    # print(x_loc, y_loc)
 
-    # print(ori_image)
+    # # print(ori_image)
 
-    # print(torch.max(mask))
-    # print(torch.min(mask))
-    ori_image = tsf1(ori_image)
-    image_with_hole = tsf1(image_with_hole)
-    mask = transforms.ToPILImage()(mask)
+    # # print(torch.max(mask))
+    # # print(torch.min(mask))
+    # ori_image = tsf1(ori_image)
+    # image_with_hole = tsf1(image_with_hole)
+    # mask = transforms.ToPILImage()(mask)
 
-    ori_image.show()
-    image_with_hole.show()
-    mask.show()
+    # ori_image.show()
+    # image_with_hole.show()
+    # mask.show()
+
+    train_loader = DataLoader(dataset=CelebaDataset(compress_path, input_transfrom),
+                              batch_size=16,
+                              shuffle=True,
+                              num_workers=2)
+
+    for ori_image, image_with_hole, mask, x_loc, y_loc in train_loader:
+        print(x_loc)
+        print(y_loc)
+        break
