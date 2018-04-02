@@ -29,7 +29,6 @@ def input_transfrom(image_path):
     gt_width = 96
 
     img = Image.open(image_path).convert('RGB')
-    img.show()
     ori_image = transforms.RandomCrop((image_height, image_width))(img)  # range [0, 255]
 
     hole_height, hole_width = np.random.randint(low, high, size=(2))
@@ -48,7 +47,7 @@ def input_transfrom(image_path):
     y_loc = np.random.randint(low=np.max([0, y + hole_height - gt_height]),
                               high=np.min([y, image_height - gt_height]) + 1)
 
-    image_with_hole = np.array(ori_image) * (1 - mask) + mask * 255.  # range [0,255]
+    image_with_hole = np.array(ori_image) * (1 - mask) + mask * 255.  # range [0,255.]
 
     tsf = transforms.Compose([
         transforms.ToTensor(),
@@ -57,7 +56,7 @@ def input_transfrom(image_path):
 
     ori_image = tsf(ori_image)  # range [-1,1]
     image_with_hole = tsf(image_with_hole)  # range [-1, 1]
-    mask = transforms.ToTensor()(mask * 255)
+    mask = transforms.ToTensor()(mask * 255)  # range [0, 1]
 
     return ori_image, image_with_hole, mask, x_loc, y_loc
 
@@ -76,7 +75,8 @@ class CelebaDataset(Dataset):
 
     def __getitem__(self, index):
         """Get one item of dataset."""
-        pass
+        ori_image, image_with_hole, mask, x_loc, y_loc = self.input_transfrom(self.train_path[index])
+        return ori_image, image_with_hole, mask, x_loc, y_loc
 
     def __len__(self):
         """Get the number of samples in dataset."""
@@ -87,14 +87,22 @@ if __name__ == '__main__':
     img_path = '/Users/apple/Desktop/richard/Tensorflow_Learning/Inpainting/GlobalLocalImageCompletion_TF/CelebA/000013.png'
     ori_image, image_with_hole, mask, x_loc, y_loc = input_transfrom(img_path)
 
+    tsf1 = transforms.Compose([transforms.Normalize((-1, -1, -1), (2, 2, 2)),
+                               transforms.ToPILImage()])
+
     print(ori_image.size())
     print(image_with_hole.size())
     print(mask.size())
     print(x_loc, y_loc)
 
-    # ori_image = transforms.ToPILImage()(ori_image)
-    # image_with_hole = transforms.ToPILImage()(image_with_hole)
-    # mask = transforms.ToPILImage()(mask)
-    # ori_image.show()
-    # image_with_hole.show()
-    # mask.show()
+    # print(ori_image)
+
+    # print(torch.max(mask))
+    # print(torch.min(mask))
+    ori_image = tsf1(ori_image)
+    image_with_hole = tsf1(image_with_hole)
+    mask = transforms.ToPILImage()(mask)
+
+    ori_image.show()
+    image_with_hole.show()
+    mask.show()
