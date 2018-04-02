@@ -1,11 +1,14 @@
 import platform
 import pandas as pd
 import numpy as np
+from PIL import Image
 
 import torch
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
+from torchvision import transforms
+
 
 if platform.system() == 'Windows':
     compress_path = 'E:\\TensorFlow_Learning\\Inpainting\\GlobalLocalImageCompletion_TF\\CelebA\\celeba_train_path_win.pickle'
@@ -15,6 +18,10 @@ elif platform.system() == 'Linux':
 
 def is_image_file(filename):
     return any(filename.endswith(extension) for extension in [".png", ".jpg", ".jpeg"])
+
+
+def input_transfrom(image_path):
+    img = Image.open(image_path)
 
 
 class CelebaDataset(Dataset):
