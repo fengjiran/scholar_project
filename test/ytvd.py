@@ -12,8 +12,8 @@ def download_main(link):
 
 
 if __name__ == '__main__':
-    download_main(sys.argv[1])
+    # download_main(sys.argv[1])
     # for link in links_lizhi[11:]:
     #     download_main(link)
 
-    # download_main('https://www.youtube.com/watch?v=s6_sMaCq7Mo')
+    download_main('https://www.youtube.com/watch?v=Br5aJa6MkBc')
